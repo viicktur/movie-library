@@ -13,34 +13,12 @@ import MovieThumb from "./elements/MovieThumb";
 import LoadMoreBtn from "./elements/LoadMoreBtn";
 import Spinner from "./elements/Spinner";
 
+//custome Hook
+import { useHomeFetch } from "./hooks/useHomeFetch";
+
 const Home = () => {
-  const [state, setState] = useState({ movie: [] });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
-  const fetchmovies = async (endpoint) => {
-    setError(true);
-    setLoading(true);
-
-    try {
-      const result = await (await fetch(endpoint)).json();
-
-      setState((prev) => ({
-        ...prev,
-        movies: [...result.results],
-        heroImage: prev.heroImage || result.results[0],
-        currentPage: result.page,
-        totalPages: result.total_pages,
-      }));
-    } catch (error) {
-      setError(true);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchmovies(`${API_URL}movie/popular?api_key=${API_KEY}`);
-  }, []);
+  const [{ state, loading, error }, fetchmovies] = useHomeFetch();
+  console.log(state);
   return (
     <>
       <HeroImage />
