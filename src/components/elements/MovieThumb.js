@@ -6,7 +6,7 @@ const MovieThumb = ({ clickable, image, movieId, movieName }) => (
   <StyledMovieThumb>
     {clickable ? (
       <Link to={`/${movieId}`}>
-        <img className="clickable" src={image} alt={movieName} />
+        <img className="clickable" src={image} alt="moviethumb" />
       </Link>
     ) : (
       <img src={image} alt="movieThumb" />

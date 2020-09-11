@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
-  API_URL,
-  API_KEY,
+  POPULAR_BASE_URL,
+  SEARCH_BASE_URL,
   IMAGE_BASE_URL,
   BACKDROP_SIZE,
   POSTER_SIZE,
@@ -24,9 +24,27 @@ const Home = () => {
       loading,
       error,
     },
-    fetchmovies,
+    fetchMovies,
   ] = useHomeFetch();
   const [searchTerm, setSearchTerm] = useState("");
+
+  const searchMovies = (search) => {
+    const endpoint = search ? SEARCH_BASE_URL + search : POPULAR_BASE_URL;
+
+    setSearchTerm(search);
+    fetchMovies(endpoint);
+  };
+
+  const LoadMoreMovies = () => {
+    const searchEndPoint = `${SEARCH_BASE_URL}${searchTerm}&page=${
+      currentPage + 1
+    }`;
+    const popularEndPoint = `${POPULAR_BASE_URL}&page=${currentPage + 1}`;
+
+    const endpoint = searchTerm ? searchEndPoint : popularEndPoint;
+
+    fetchMovies(endpoint);
+  };
 
   if (error) return <div>Something went wrong ....</div>;
   if (!movies[0]) return <Spinner />;
@@ -37,7 +55,7 @@ const Home = () => {
         title={heroImage.original_title}
         text={heroImage.overview}
       />
-      <SearchBar />
+      <SearchBar callback={searchMovies} />
       <Grid header={searchTerm ? " Search Results" : "Popular Movie"}>
         {movies.map((movie) => (
           <MovieThumb
@@ -53,9 +71,10 @@ const Home = () => {
           />
         ))}
       </Grid>
-      <MovieThumb />
-      <Spinner />
-      <LoadMoreBtn />
+      {loading && <Spinner />}
+      {currentPage < totalPages && !loading && (
+        <LoadMoreBtn text="Load More" callback={LoadMoreMovies} />
+      )}
     </>
   );
 };
